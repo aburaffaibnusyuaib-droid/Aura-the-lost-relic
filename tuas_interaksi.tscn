@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://blyqov5slwd2v"]
+
+[ext_resource type="Script" uid="uid://cmb1a81t60vw6" path="res://tuas_interaksi.gd" id="1_qqii4"]
+[ext_resource type="Texture2D" uid="uid://c3hf7smad6wc0" path="res://assets/item/button.png" id="2_7lcjw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pmvmr"]
+size = Vector2(87.5, 88.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dstq"]
+atlas = ExtResource("2_7lcjw")
+region = Rect2(289, 0, 289, 432)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6lf2w"]
+atlas = ExtResource("2_7lcjw")
+region = Rect2(0, 0, 289, 432)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lrn7f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0dstq")
+}],
+"loop": 1,
+"name": &"aktif",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6lf2w")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="TuasInteraksi" type="Area2D" unique_id=2102678924]
+script = ExtResource("1_qqii4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1270509124]
+position = Vector2(3, 3)
+shape = SubResource("RectangleShape2D_pmvmr")
+
+[node name="Label" type="Label" parent="." unique_id=313190659]
+offset_left = -68.0
+offset_top = -80.0
+offset_right = 97.0
+offset_bottom = -47.0
+text = "Tekan Tombol E"
+uppercase = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2113262552]
+position = Vector2(1.9999962, -5)
+scale = Vector2(0.333045, 0.3449074)
+sprite_frames = SubResource("SpriteFrames_lrn7f")
+animation = &"idle"
+frame_progress = 0.4427071

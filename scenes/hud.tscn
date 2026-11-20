@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://dhqeca6wxjiht"]
+
+[ext_resource type="Script" uid="uid://dq07m73vyr5hk" path="res://scenes/hud.gd" id="1_5ysmq"]
+[ext_resource type="Texture2D" uid="uid://b8hikvyss13x7" path="res://assets/tilemap/gersang/PNG/Collectable Object/Autumn_Forest_2D_Platformer_Tileset_Collectable Object - Life.png" id="1_oo0fn"]
+[ext_resource type="Texture2D" uid="uid://kb24bu57uk2b" path="res://assets/tilemap/gersang/PNG/Collectable Object/Autumn_Forest_2D_Platformer_Tileset_Collectable Object - Golden Key.png" id="2_5ysmq"]
+
+[node name="HUD" type="CanvasLayer" unique_id=605016080]
+script = ExtResource("1_5ysmq")
+
+[node name="UIContainer" type="MarginContainer" parent="." unique_id=1744111571]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+offset_transform_enabled = true
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="TopBar" type="HBoxContainer" parent="UIContainer" unique_id=1307696318]
+layout_mode = 2
+
+[node name="HeartsContainer" type="HBoxContainer" parent="UIContainer/TopBar" unique_id=1974094077]
+layout_mode = 2
+
+[node name="Heart1" type="TextureRect" parent="UIContainer/TopBar/HeartsContainer" unique_id=599580454]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("1_oo0fn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Heart2" type="TextureRect" parent="UIContainer/TopBar/HeartsContainer" unique_id=1112693040]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("1_oo0fn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Heart3" type="TextureRect" parent="UIContainer/TopBar/HeartsContainer" unique_id=758711845]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("1_oo0fn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Spacer" type="Control" parent="UIContainer/TopBar" unique_id=1613915720]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="KeyIcon" type="TextureRect" parent="UIContainer/TopBar" unique_id=362850237]
+custom_minimum_size = Vector2(80, 60)
+layout_mode = 2
+texture = ExtResource("2_5ysmq")
+expand_mode = 1
+stretch_mode = 5

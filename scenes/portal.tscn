@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://dp2e5yweod8rm"]
+
+[ext_resource type="Script" uid="uid://7a2fvri35bus" path="res://scenes/portal.gd" id="1_1ffj6"]
+[ext_resource type="Texture2D" uid="uid://cef7edctqrhx4" path="res://assets/item/portal_terbuka-removebg-preview.png" id="2_d4jfq"]
+[ext_resource type="Texture2D" uid="uid://i2s6x6f8lvsd" path="res://assets/item/portal_terkunci-removebg-preview.png" id="2_jr6l0"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v0xau"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_d4jfq")
+}],
+"loop": 1,
+"name": &"terbuka",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_jr6l0")
+}],
+"loop": 1,
+"name": &"tertutup",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
+size = Vector2(137, 29)
+
+[node name="portal" type="Area2D" unique_id=1865235178]
+script = ExtResource("1_1ffj6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1929714938]
+position = Vector2(365.5, 381.5)
+scale = Vector2(0.754, 0.754)
+sprite_frames = SubResource("SpriteFrames_v0xau")
+animation = &"terbuka"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1747257805]
+position = Vector2(367.5, 468.5)
+shape = SubResource("RectangleShape2D_lrn7f")

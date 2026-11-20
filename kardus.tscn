@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cb86dc7eerrj5"]
+
+[ext_resource type="Texture2D" uid="uid://c6ii5ai75qare" path="res://assets/tilemap/gersang/PNG/Platfromer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Wooden Box.png" id="1_amhv6"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_2v04i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
+size = Vector2(144, 123)
+
+[node name="Kardus" type="RigidBody2D" unique_id=525501381]
+physics_material_override = SubResource("PhysicsMaterial_2v04i")
+lock_rotation = true
+linear_damp = 3.864
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=201094613]
+position = Vector2(328.25, 158)
+scale = Vector2(1.0658915, 1.109375)
+texture = ExtResource("1_amhv6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1291815561]
+position = Vector2(327, 155.5)
+shape = SubResource("RectangleShape2D_lrn7f")

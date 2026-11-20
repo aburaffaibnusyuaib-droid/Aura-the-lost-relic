@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dtgq0nahouo05"]
+
+[ext_resource type="Script" uid="uid://bp3hkwwkgrdtd" path="res://zona_seluncur.gd" id="1_clymo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
+size = Vector2(984.69135, 78.45007)
+
+[node name="ZonaSeluncur" type="Area2D" unique_id=1999696927]
+script = ExtResource("1_clymo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1177526366]
+position = Vector2(407.43228, 224.83716)
+rotation = 0.56456745
+scale = Vector2(0.9999998, 0.9999998)
+shape = SubResource("RectangleShape2D_lrn7f")

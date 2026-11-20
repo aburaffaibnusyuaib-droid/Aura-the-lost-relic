@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://c3qxbf3cjmti8"]
+
+[ext_resource type="Script" uid="uid://b1lk154dbnuvy" path="res://puzzle_one_line.gd" id="1_4a36d"]
+[ext_resource type="Texture2D" uid="uid://ls7f4bypfwlh" path="res://assets/ui/background/puzlelvl1bg.png" id="2_4dk53"]
+
+[node name="PuzzleOneLine" type="CanvasLayer" unique_id=1095316909]
+script = ExtResource("1_4a36d")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1782143759]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.003921569)
+
+[node name="Board" type="Control" parent="." unique_id=897175664]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Board" unique_id=1460172039]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_4dk53")
+expand_mode = 1
+
+[node name="LineGuide" type="Line2D" parent="Board" unique_id=531522808]
+width = 4.0
+default_color = Color(1, 1, 1, 0)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="LineTrace" type="Line2D" parent="Board" unique_id=1904740508]
+default_color = Color(0, 0.9411765, 1, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Points" type="Node2D" parent="Board" unique_id=71012292]
+
+[node name="PO" type="Marker2D" parent="Board/Points" unique_id=388737345]
+position = Vector2(300, 170)
+
+[node name="Dot" type="ColorRect" parent="Board/Points/PO" unique_id=1852871559]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.6509804, 0.9411765, 1, 1)
+
+[node name="PO2" type="Marker2D" parent="Board/Points" unique_id=79290354]
+position = Vector2(170, 300)
+
+[node name="Dot" type="ColorRect" parent="Board/Points/PO2" unique_id=2089107586]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.6509804, 0.9411765, 1, 1)
+
+[node name="PO3" type="Marker2D" parent="Board/Points" unique_id=1115388039]
+position = Vector2(430, 300)
+
+[node name="Dot" type="ColorRect" parent="Board/Points/PO3" unique_id=702826153]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.6509804, 0.9411765, 1, 1)
+
+[node name="PO4" type="Marker2D" parent="Board/Points" unique_id=379245680]
+position = Vector2(300, 300)
+
+[node name="Dot" type="ColorRect" parent="Board/Points/PO4" unique_id=92615218]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.6509804, 0.9411765, 1, 1)
+
+[node name="PO5" type="Marker2D" parent="Board/Points" unique_id=702432232]
+position = Vector2(300, 430)
+
+[node name="Dot" type="ColorRect" parent="Board/Points/PO5" unique_id=1630276538]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.6509804, 0.9411765, 1, 1)

@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ft1luhpc43ls"]
+
+[ext_resource type="Texture2D" uid="uid://bx5rr7717gmax" path="res://assets/tilemap/sky/pijakansky.png" id="1_n8f7l"]
+[ext_resource type="Script" uid="uid://bea64o7y23bpc" path="res://pijakan_geser.gd" id="1_sxnlr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sxnlr"]
+size = Vector2(189, 59)
+
+[node name="PijakanGeser" type="AnimatableBody2D" unique_id=402229552]
+script = ExtResource("1_sxnlr")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=313936152]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_n8f7l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1613201686]
+position = Vector2(7.5, 1.5)
+shape = SubResource("RectangleShape2D_sxnlr")

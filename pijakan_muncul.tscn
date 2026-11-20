@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ctjkdfsocsvi7"]
+
+[ext_resource type="Texture2D" uid="uid://bx5rr7717gmax" path="res://assets/tilemap/sky/pijakansky.png" id="1_ayeyi"]
+[ext_resource type="Script" uid="uid://0omv7j52r8bb" path="res://pijakan_muncul.gd" id="1_er0pc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
+size = Vector2(254.5, 75)
+
+[node name="PijakanMuncul" type="StaticBody2D" unique_id=351252603]
+script = ExtResource("1_er0pc")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1510269057]
+scale = Vector2(0.66089964, 0.8611111)
+texture = ExtResource("1_ayeyi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=974389572]
+position = Vector2(11.75, -3)
+shape = SubResource("RectangleShape2D_lrn7f")

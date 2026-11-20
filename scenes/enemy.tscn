@@ -1,0 +1,149 @@
+[gd_scene format=3 uid="uid://du23qxdvcdqyx"]
+
+[ext_resource type="Texture2D" uid="uid://d3si16px4067n" path="res://assets/enemy sprite/deathenemy.png" id="1_4ra3w"]
+[ext_resource type="Texture2D" uid="uid://dj326x0cb45n3" path="res://assets/enemy sprite/dieenemy.png" id="2_5uy6h"]
+[ext_resource type="Texture2D" uid="uid://b547tbvyhlctt" path="res://assets/enemy sprite/walkenemy.png" id="3_c4w8v"]
+[ext_resource type="Script" uid="uid://bm05wstdaexvi" path="res://scenes/enemy.gd" id="4_5uy6h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwavj"]
+atlas = ExtResource("1_4ra3w")
+region = Rect2(15, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nenq2"]
+atlas = ExtResource("1_4ra3w")
+region = Rect2(178, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_md484"]
+atlas = ExtResource("1_4ra3w")
+region = Rect2(341, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ipns3"]
+atlas = ExtResource("1_4ra3w")
+region = Rect2(504, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8qclf"]
+atlas = ExtResource("2_5uy6h")
+region = Rect2(12, 0, 164, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8i8w"]
+atlas = ExtResource("2_5uy6h")
+region = Rect2(176, 0, 164, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otmr2"]
+atlas = ExtResource("2_5uy6h")
+region = Rect2(340, 0, 164, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtq4b"]
+atlas = ExtResource("2_5uy6h")
+region = Rect2(504, 0, 164, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0cyh"]
+atlas = ExtResource("3_c4w8v")
+region = Rect2(16, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g0wcc"]
+atlas = ExtResource("3_c4w8v")
+region = Rect2(179, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s1ycm"]
+atlas = ExtResource("3_c4w8v")
+region = Rect2(342, 0, 163, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shcg2"]
+atlas = ExtResource("3_c4w8v")
+region = Rect2(505, 0, 163, 373)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8tegq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwavj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nenq2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_md484")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ipns3")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8qclf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w8i8w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otmr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtq4b")
+}],
+"loop": 0,
+"name": &"hurt",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0cyh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g0wcc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s1ycm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_shcg2")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5uy6h"]
+size = Vector2(160, 129)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c4w8v"]
+size = Vector2(172, 134.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4ra3w"]
+size = Vector2(109.25, 178)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=266106421]
+collision_layer = 0
+script = ExtResource("4_5uy6h")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=70431801]
+sprite_frames = SubResource("SpriteFrames_8tegq")
+animation = &"hurt"
+autoplay = "walk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1369772210]
+position = Vector2(9, 10)
+shape = SubResource("RectangleShape2D_5uy6h")
+
+[node name="LedgeCheck" type="RayCast2D" parent="." unique_id=1360174757]
+position = Vector2(22, 1)
+target_position = Vector2(-1, 63)
+collision_mask = 3
+
+[node name="BodyHitbox" type="Area2D" parent="." unique_id=1590389331]
+position = Vector2(-290, -79)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyHitbox" unique_id=980159781]
+position = Vector2(298, 89.75)
+shape = SubResource("RectangleShape2D_c4w8v")
+
+[node name="StompDetector" type="Area2D" parent="." unique_id=2126147076]
+position = Vector2(70, 113)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector" unique_id=1916124412]
+position = Vector2(-59, -119)
+shape = SubResource("RectangleShape2D_4ra3w")

@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cgdxkn15v1gfq"]
+
+[ext_resource type="Script" uid="uid://dra2j04pjrof3" path="res://tali_ayun.gd" id="1_rugpu"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lrn7f"]
+radius = 22.0
+height = 90.0
+
+[node name="TaliAyun" type="Node2D" unique_id=686433919]
+z_index = 20
+z_as_relative = false
+position = Vector2(0, -45)
+script = ExtResource("1_rugpu")
+panjang_tali = 230.0
+lebar_tali = 10.0
+warna_tali = null
+sudut_maksimal_derajat = 42.0
+kekuatan_pompa = 1.8
+gravitasi_bandul = 10.5
+
+[node name="Line2D" type="Line2D" parent="." unique_id=253435362]
+points = PackedVector2Array(0, 0)
+default_color = Color(0.5196408, 0.23665491, 0.041098885, 1)
+
+[node name="GrabArea" type="Area2D" parent="." unique_id=631721043]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea" unique_id=21956265]
+position = Vector2(0, -35)
+shape = SubResource("CapsuleShape2D_lrn7f")

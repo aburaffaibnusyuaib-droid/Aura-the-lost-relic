@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://d2srwmh66ts8t"]
+
+[ext_resource type="Script" uid="uid://dkf8pvwckp2v" path="res://puzzle_level_2.gd" id="1_1cnj0"]
+[ext_resource type="Script" uid="uid://dhgfwnx8a7cv4" path="res://puzzle_level_2_root.gd" id="1_maq14"]
+[ext_resource type="Texture2D" uid="uid://dk2efov2sf4wo" path="res://assets/ui/background/puzlelevel2bg.png" id="2_vcac2"]
+
+[node name="PuzzleLevel2" type="CanvasLayer" unique_id=1888593355]
+script = ExtResource("1_maq14")
+
+[node name="OverlayGelap" type="ColorRect" parent="." unique_id=2082180784]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.019607844, 0.03137255, 0.07058824, 0.7647059)
+
+[node name="FrameBatu" type="TextureRect" parent="." unique_id=217102155]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -290.0
+offset_right = 280.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_vcac2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PapanPipa" type="Control" parent="." unique_id=55972045]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1cnj0")

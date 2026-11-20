@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cm52ku12nyfgb"]
+
+[ext_resource type="Script" uid="uid://c2nwr02s3ikak" path="res://scenes/projectile.gd" id="1_q3m7n"]
+[ext_resource type="Texture2D" uid="uid://lnou1yypfrdp" path="res://assets/item/bullet.png" id="2_softn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6q2a6"]
+atlas = ExtResource("2_softn")
+region = Rect2(5, 0, 166, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byeak"]
+atlas = ExtResource("2_softn")
+region = Rect2(171, 0, 166, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jxwu6"]
+atlas = ExtResource("2_softn")
+region = Rect2(337, 0, 166, 373)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w7nm8"]
+atlas = ExtResource("2_softn")
+region = Rect2(503, 0, 166, 373)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6aapk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6q2a6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byeak")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jxwu6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w7nm8")
+}],
+"loop": 1,
+"name": &"fly",
+"speed": 13.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c8fcr"]
+radius = 21.0
+
+[node name="Projectile" type="Area2D" unique_id=1285276364]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("1_q3m7n")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=870816978]
+position = Vector2(2.0000007, -1.9073486e-06)
+scale = Vector2(0.42394578, 0.3641086)
+sprite_frames = SubResource("SpriteFrames_6aapk")
+animation = &"fly"
+autoplay = "fly"
+frame = 2
+frame_progress = 0.9484805
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=584206795]
+position = Vector2(-3, 2)
+shape = SubResource("CircleShape2D_c8fcr")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=2125188844]
+position = Vector2(-3, 1)
+rect = Rect2(-21, -20, 41, 35)
