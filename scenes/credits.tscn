@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://c6creditsending7"]
+
+[ext_resource type="Script" uid="uid://cnvmkywpcs2rc" path="res://scenes/credits.gd" id="1_credits"]
+
+[node name="Credits" type="Control" unique_id=778102934]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_credits")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1498302111]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -220.0
+offset_right = 400.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="JudulLanjut" type="Label" parent="VBoxContainer" unique_id=2031948571]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8980392, 0.8745098, 0.772549, 1)
+theme_override_colors/font_shadow_color = Color(0.0196078, 0.0392157, 0.0705882, 0.9411765)
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 40
+text = "TO BE CONTINUED..."
+horizontal_alignment = 1
+
+[node name="Subjudul" type="Label" parent="VBoxContainer" unique_id=1672901238]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.43137255, 0.96862745, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.0196078, 0.117647, 0.15686275, 0.8627451)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 18
+text = "✦  AURA: THE LOST RELIC  ✦"
+horizontal_alignment = 1
+
+[node name="Pemisah" type="Label" parent="VBoxContainer" unique_id=987214532]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.23921569, 0.34117647, 0.45882353, 1)
+theme_override_font_sizes/font_size = 14
+text = "─── ❖ ───"
+horizontal_alignment = 1
+
+[node name="Narasi" type="Label" parent="VBoxContainer" unique_id=562309114]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.63529414, 0.7058824, 0.79607844, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8235294)
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/line_spacing = 6
+theme_override_font_sizes/font_size = 15
+text = "Rhein melangkah menembus altar relik kuno...
+Namun segel terbesar aura baru saja terpecahkan.
+Kekuatan purba yang tertidur ribuan tahun kini mulai terbangun.
+
+Terima kasih telah memainkan babak ini."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="VBoxContainer" unique_id=1102938475]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="TombolMenu" type="Button" parent="VBoxContainer" unique_id=349281726]
+custom_minimum_size = Vector2(320, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 2
+text = "✦  KEMBALI KE MAIN MENU  ✦"

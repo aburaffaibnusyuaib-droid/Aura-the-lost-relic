@@ -69,6 +69,12 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Periksa kontak badan terus-menerus jika pemain masih berada di dalam area setelah kebal habis
+	if not is_mati and body_hitbox:
+		for b in body_hitbox.get_overlapping_bodies():
+			if (b.is_in_group("Player") or b.name == "Player") and not b.get("sedang_kebal"):
+				_on_body_hitbox_entered(b)
+
 
 func balik_arah() -> void:
 	bisa_balik = false
@@ -91,6 +97,9 @@ func _on_stomp_detector_entered(body: Node2D) -> void:
 	if body.is_in_group("Player") or body.name == "Player":
 		# Pemain hanya berhasil menginjak jika sedang meluncur/jatuh ke bawah
 		if body.velocity.y > 0:
+			var am := get_node_or_null("/root/AudioManager")
+			if am and am.has_method("play_stomp"):
+				am.play_stomp()
 			if body.has_method("pantulkan"):
 				body.pantulkan(340.0)
 			else:
@@ -104,10 +113,12 @@ func _on_body_hitbox_entered(body: Node2D) -> void:
 		return
 
 	if body.is_in_group("Player") or body.name == "Player":
+		if "sedang_kebal" in body and body.sedang_kebal:
+			return
 		if body.has_method("terima_damage"):
-			var arah_pantul: Vector2 = (body.global_position - global_position).normalized()
-			arah_pantul.y = -0.4
-			body.terima_damage(damage, arah_pantul.normalized() * 320.0)
+			body.terima_damage(damage, global_position)
+		elif body.has_method("take_damage"):
+			body.take_damage(damage)
 
 
 # 3. MEKANIK DITEMBAK PROYEKTIL AURA
@@ -138,6 +149,10 @@ func terkena_tembakan(jumlah_damage: int = 1) -> void:
 func hancur_musuh() -> void:
 	is_mati = true
 	velocity = Vector2.ZERO
+
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_defeat"):
+		am.play_defeat()
 	
 	# Matikan seluruh sistem tabrakan agar tidak menghalangi pemain lagi
 	if body_hitbox:

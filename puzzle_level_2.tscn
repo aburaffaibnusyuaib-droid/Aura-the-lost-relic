@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dk2efov2sf4wo" path="res://assets/ui/background/puzlelevel2bg.png" id="2_vcac2"]
 
 [node name="PuzzleLevel2" type="CanvasLayer" unique_id=1888593355]
+process_mode = 3
 script = ExtResource("1_maq14")
 
 [node name="OverlayGelap" type="ColorRect" parent="." unique_id=2082180784]

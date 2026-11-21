@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dt8020fet2suo" path="res://assets/tilemap/cristal freze/PNG/tilesetlevl2.png" id="1_6sh32"]
 [ext_resource type="Texture2D" uid="uid://dgxxqtveukxa6" path="res://assets/tilemap/forrest/PNG/tileset_level1.png" id="1_dwgg1"]
+[ext_resource type="Script" uid="uid://cyjn4rlo0pfuu" path="res://scenes/level_1.gd" id="1_lvl1gd"]
 [ext_resource type="PackedScene" uid="uid://bxj3y1q1y0wmp" path="res://scenes/player.tscn" id="1_m7ahb"]
 [ext_resource type="Texture2D" uid="uid://dfc7r5h0fhthv" path="res://assets/tilemap/forrest/PNG/bglevel1.jpeg" id="2_6sh32"]
 [ext_resource type="PackedScene" uid="uid://db0uf8y633ntj" path="res://scenes/ground.tscn" id="2_dwgg1"]
@@ -14,6 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://coouejt3e6fs2" path="res://assets/tilemap/forrest/PNG/pilar_lengkung-removebg-preview.png" id="12_f31uk"]
 [ext_resource type="Texture2D" uid="uid://176idglstic6" path="res://assets/tilemap/forrest/PNG/pilar_tebing_kanan-removebg-preview.png" id="13_gnai3"]
 [ext_resource type="Texture2D" uid="uid://chbpsdi1ui3nh" path="res://assets/tilemap/forrest/PNG/pilarkokoh-removebg-preview.png" id="14_gnai3"]
+[ext_resource type="Script" uid="uid://bmj2r5b3lcnpy" path="res://ladder.gd" id="15_ladder"]
+[ext_resource type="Script" path="res://scenes/spike.gd" id="16_spike"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="17_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bbk5w"]
 texture = ExtResource("1_6sh32")
@@ -16191,8 +16195,13 @@ friction = 0.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xiplf"]
 size = Vector2(135, 115)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
-size = Vector2(83.5, 537.0625)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l1_lad1"]
+resource_local_to_scene = true
+size = Vector2(26, 456)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l1_lad2"]
+resource_local_to_scene = true
+size = Vector2(26, 552)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yjj0d"]
 size = Vector2(5531, 154)
@@ -16201,15 +16210,32 @@ size = Vector2(5531, 154)
 size = Vector2(428, 46)
 
 [node name="level1" type="Node2D" unique_id=1240310665]
+script = ExtResource("1_lvl1gd")
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=981234567]
+position = Vector2(520, 511)
+
+[node name="TransitionLayer" type="CanvasLayer" parent="." unique_id=870095990]
+layer = 100
+
+[node name="BlackOverlay" type="ColorRect" parent="TransitionLayer" unique_id=2128352167]
+modulate = Color(1, 1, 1, 0.003921569)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="Player" parent="." unique_id=106448807 instance=ExtResource("1_m7ahb")]
 z_index = 10
 position = Vector2(520, 511)
-up_direction = Vector2(0, 1)
+floor_max_angle = 1.134464
+floor_snap_length = 18.0
 
 [node name="Level1Bg" type="Sprite2D" parent="." unique_id=663652840]
 z_index = -10
-position = Vector2(1825, -532.75006)
+position = Vector2(1825.0001, -472)
 scale = Vector2(5.172851, 11.732456)
 texture = ExtResource("2_6sh32")
 
@@ -16243,19 +16269,29 @@ texture = ExtResource("5_6sh32")
 position = Vector2(1115.5, 662)
 shape = SubResource("RectangleShape2D_xiplf")
 
-[node name="leader" type="Area2D" parent="." unique_id=686809196]
+[node name="Ladder" type="Area2D" parent="." unique_id=686809196 groups=["ladder", "leader"]]
 z_index = 100
-position = Vector2(10, -12)
+position = Vector2(3112, 252)
+script = ExtResource("15_ladder")
+lebar_tangga = 26.0
+tinggi_tangga = 456.0
+offset_y = 0.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="leader" unique_id=1728130831 groups=["leader"]]
-position = Vector2(3104.25, 276.0625)
-shape = SubResource("RectangleShape2D_lrn7f")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ladder" unique_id=1728130831]
+shape = SubResource("RectangleShape2D_l1_lad1")
 
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="leader" unique_id=1822049645 groups=["leader"]]
-position = Vector2(1582, -223.46875)
-shape = SubResource("RectangleShape2D_lrn7f")
+[node name="Ladder2" type="Area2D" parent="." unique_id=1822049646 groups=["ladder", "leader"]]
+z_index = 100
+position = Vector2(1592, -228)
+script = ExtResource("15_ladder")
+lebar_tangga = 26.0
+tinggi_tangga = 552.0
+offset_y = 0.0
 
-[node name="HUD" parent="leader/CollisionShape2D3" unique_id=605016080 instance=ExtResource("7_u3awl")]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ladder2" unique_id=1822049645]
+shape = SubResource("RectangleShape2D_l1_lad2")
+
+[node name="HUD" parent="." unique_id=605016080 instance=ExtResource("7_u3awl")]
 
 [node name="FallZone" type="Area2D" parent="." unique_id=1479025699]
 position = Vector2(105, 44)
@@ -16265,6 +16301,7 @@ position = Vector2(2674.5, 1039)
 shape = SubResource("RectangleShape2D_yjj0d")
 
 [node name="Spike" type="Area2D" parent="." unique_id=1033753771]
+script = ExtResource("16_spike")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spike" unique_id=768752971]
 position = Vector2(1782, 898)
@@ -16300,7 +16337,11 @@ texture = ExtResource("14_gnai3")
 position = Vector2(2012, -23.99997)
 jarak_patroli_maks = 760.0
 
-[connection signal="body_entered" from="leader" to="Player" method="masuk_area_tangga"]
-[connection signal="body_exited" from="leader" to="Player" method="keluar_area_tangga"]
+[node name="PauseMenu" parent="." instance=ExtResource("17_pause")]
+
+[connection signal="body_entered" from="Ladder" to="Player" method="masuk_area_tangga"]
+[connection signal="body_exited" from="Ladder" to="Player" method="keluar_area_tangga"]
+[connection signal="body_entered" from="Ladder2" to="Player" method="masuk_area_tangga"]
+[connection signal="body_exited" from="Ladder2" to="Player" method="keluar_area_tangga"]
 [connection signal="body_entered" from="FallZone" to="Player" method="kena_jurang"]
 [connection signal="body_entered" from="Spike" to="Player" method="kena_duri"]

@@ -2,7 +2,6 @@ extends Control
 
 # Sinyal komunikasi ke sistem portal Level 3
 signal puzzle_selesai
-signal puzzle_ditutup
 
 # Konfigurasi dimensi papan labirin 5x5
 const UKURAN_GRID: int = 5
@@ -57,6 +56,7 @@ var tween_popup: Tween = null
 func _ready() -> void:
 	posisi_dasar = position
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	reset_papan(false)
 
 
@@ -77,7 +77,7 @@ func buka_papan() -> void:
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
-# Update animasi halus 60fps untuk rotasi rune, jejak aura, getaran, dan efek menang
+# Update animasi halus untuk rotasi rune, jejak aura, getaran, dan efek menang
 func _process(delta: float) -> void:
 	if not visible:
 		return
@@ -140,7 +140,7 @@ func _gui_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var klik: Vector2 = event.position
 
-		# Cek klik pada bar tombol arah, reset, atau tutup
+		# Cek klik pada bar tombol arah atau reset
 		for id_btn in area_tombol.keys():
 			var rect_btn: Rect2 = area_tombol[id_btn]
 			if rect_btn.has_point(klik):
@@ -155,8 +155,6 @@ func _gui_input(event: InputEvent) -> void:
 						gerakkan_bola(Vector2i.DOWN)
 					"reset":
 						reset_papan(true)
-					"tutup":
-						tutup_papan()
 				accept_event()
 				return
 
@@ -179,7 +177,7 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 
 
-# Kontrol keyboard penuh (WASD, Tombol Panah, R untuk Reset, ESC untuk Tutup)
+# Kontrol keyboard penuh (WASD / Tombol Panah, R untuk Reset)
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or sudah_menang:
 		return
@@ -199,9 +197,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_R:
 		reset_papan(true)
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("ui_cancel"):
-		tutup_papan()
-		get_viewport().set_input_as_handled()
 
 
 # Menggerakkan bola Merah searah input dan bola Biru berlawanan arah (cermin)
@@ -220,6 +215,9 @@ func gerakkan_bola(arah: Vector2i) -> void:
 
 	if merah_bisa or biru_bisa:
 		jumlah_langkah += 1
+		var am := get_node_or_null("/root/AudioManager")
+		if am and am.has_method("play_puzzle_click"):
+			am.play_puzzle_click()
 
 	if merah_bisa:
 		pos_merah = calon_merah
@@ -254,19 +252,6 @@ func reset_papan(dengan_getar: bool = true) -> void:
 	queue_redraw()
 
 
-# Menutup popup puzzle dengan animasi halus
-func tutup_papan() -> void:
-	if tween_popup and tween_popup.is_valid():
-		tween_popup.kill()
-
-	pivot_offset = get_viewport_rect().size * 0.5
-	tween_popup = create_tween().set_parallel(true)
-	tween_popup.tween_property(self, "scale", Vector2(0.88, 0.88), 0.18)
-	tween_popup.tween_property(self, "modulate:a", 0.0, 0.18)
-	await tween_popup.finished
-	puzzle_ditutup.emit()
-
-
 # Memicu efek getaran pada altar puzzle
 func picu_getar(durasi: float) -> void:
 	waktu_getar = durasi
@@ -276,10 +261,13 @@ func picu_getar(durasi: float) -> void:
 func cek_kemenangan() -> void:
 	if pos_merah == TARGET_MERAH and pos_biru == TARGET_BIRU:
 		sudah_menang = true
+		var am := get_node_or_null("/root/AudioManager")
+		if am and am.has_method("play_puzzle_win"):
+			am.play_puzzle_win()
 		flash_putih = 0.65
 		picu_getar(0.32)
 
-		await get_tree().create_timer(1.15).timeout
+		await get_tree().create_timer(1.15, true).timeout
 		if not is_inside_tree():
 			return
 
@@ -441,27 +429,26 @@ func _draw() -> void:
 		if alpha_gelombang > 0.0:
 			draw_arc(pusat_papan, radius_gelombang, 0.0, TAU, 64, Color(1.0, 0.96, 0.85, alpha_gelombang), 5.0)
 
-	# 8. Gambar 6 tombol kontrol interaktif di bagian bawah bingkai
+	# 8. Gambar 5 tombol kontrol interaktif di bagian bawah bingkai (tanpa tombol Tutup)
 	area_tombol.clear()
 	var daftar_tombol: Array = [
 		["kiri", "<"],
 		["atas", "^"],
 		["bawah", "v"],
 		["kanan", ">"],
-		["reset", "RESET"],
-		["tutup", "TUTUP"]
+		["reset", "RESET"]
 	]
-	var lebar_kecil: float = 44.0
-	var lebar_besar: float = 68.0
-	var jarak_btn: float = 7.0
-	var total_lebar_btn: float = (4.0 * lebar_kecil) + (2.0 * lebar_besar) + (5.0 * jarak_btn)
+	var lebar_kecil: float = 46.0
+	var lebar_besar: float = 80.0
+	var jarak_btn: float = 8.0
+	var total_lebar_btn: float = (4.0 * lebar_kecil) + (1.0 * lebar_besar) + (4.0 * jarak_btn)
 	var kursor_x: float = titik_mulai.x + (total_papan - total_lebar_btn) * 0.5
 	var pos_y_btn: float = titik_mulai.y + total_papan + 18.0
 
 	for item in daftar_tombol:
 		var id_btn: String = str(item[0])
 		var label_btn: String = str(item[1])
-		var lebar_aktif: float = lebar_besar if (id_btn == "reset" or id_btn == "tutup") else lebar_kecil
+		var lebar_aktif: float = lebar_besar if id_btn == "reset" else lebar_kecil
 		var rect_btn := Rect2(kursor_x, pos_y_btn, lebar_aktif, 40.0)
 		area_tombol[id_btn] = rect_btn
 		kursor_x += lebar_aktif + jarak_btn
@@ -470,10 +457,7 @@ func _draw() -> void:
 		var warna_isi_btn := Color(0.16, 0.21, 0.33, 1.0)
 		var warna_tepi_btn := Color(0.45, 0.72, 0.96, 0.75)
 
-		if id_btn == "tutup":
-			warna_isi_btn = Color(0.36, 0.14, 0.20, 1.0) if sedang_hover else Color(0.26, 0.11, 0.16, 1.0)
-			warna_tepi_btn = Color(1.0, 0.42, 0.48, 0.90)
-		elif id_btn == "reset":
+		if id_btn == "reset":
 			warna_isi_btn = Color(0.32, 0.25, 0.14, 1.0) if sedang_hover else Color(0.22, 0.18, 0.11, 1.0)
 			warna_tepi_btn = WARNA_EMAS
 		elif sedang_hover:
@@ -483,7 +467,7 @@ func _draw() -> void:
 		draw_rect(rect_btn, warna_isi_btn, true)
 		draw_rect(rect_btn, warna_tepi_btn, false, 2.0)
 
-		var ukuran_huruf: int = 12 if (id_btn == "reset" or id_btn == "tutup") else 16
+		var ukuran_huruf: int = 12 if id_btn == "reset" else 16
 		var offset_teks_x: float = (lebar_aktif - (float(label_btn.length()) * (7.5 if ukuran_huruf == 12 else 9.0))) * 0.5
 		draw_string(font, rect_btn.position + Vector2(maxf(offset_teks_x, 6.0), 25.0), label_btn, HORIZONTAL_ALIGNMENT_LEFT, -1, ukuran_huruf, Color.WHITE)
 

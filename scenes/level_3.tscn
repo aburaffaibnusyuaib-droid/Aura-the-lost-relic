@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://dhqeca6wxjiht" path="res://scenes/hud.tscn" id="15_5xqnf"]
 [ext_resource type="Script" uid="uid://bspv1pknbu666" path="res://scenes/fall_zone.gd" id="16_una4e"]
 [ext_resource type="Script" uid="uid://bgq735v8p67n1" path="res://scenes/spike.gd" id="17_ema3p"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="18_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_h23n6"]
 texture = ExtResource("1_70nk6")
@@ -15432,7 +15433,9 @@ script = ExtResource("1_wa6ex")
 
 [node name="Player" parent="." unique_id=106448807 instance=ExtResource("2_uwxec")]
 z_index = 100
-position = Vector2(260, -200)
+position = Vector2(7879, -3603)
+floor_max_angle = 1.134464
+floor_snap_length = 18.0
 
 [node name="pijakan" type="TileMapLayer" parent="." unique_id=215038021]
 z_index = -2
@@ -15440,13 +15443,16 @@ tile_map_data = PackedByteArray("AAAAAP//AABLAC0AAAAAAAAAAABLAC4AAAAAAAEAAABLAC8
 tile_set = SubResource("TileSet_tft0k")
 
 [node name="Ladder" parent="." unique_id=88088657 instance=ExtResource("3_8uepa")]
-position = Vector2(1456, -1628)
+position = Vector2(1628, -1556)
+tinggi_tangga = 872.0
 
 [node name="Ladder2" parent="." unique_id=1229577576 instance=ExtResource("3_8uepa")]
-position = Vector2(8033, -2887)
+position = Vector2(8205, -2812)
+tinggi_tangga = 856.0
 
 [node name="Ladder3" parent="." unique_id=1235357773 instance=ExtResource("3_8uepa")]
-position = Vector2(8304, -322)
+position = Vector2(8476, -412)
+tinggi_tangga = 792.0
 
 [node name="PijakanMuncul" parent="." unique_id=351252603 instance=ExtResource("2_vcx5n")]
 position = Vector2(2927, -1839)
@@ -15486,7 +15492,9 @@ tile_set = SubResource("TileSet_70nk6")
 
 [node name="portal" parent="." unique_id=1865235178 instance=ExtResource("4_p6vls")]
 position = Vector2(6645, -3839)
+target_level = "res://scenes/credits.tscn"
 puzzle_scene = ExtResource("8_q7pjq")
+gunakan_white_flash = true
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=818672627]
 z_index = -100
@@ -15526,7 +15534,7 @@ position = Vector2(4680, -849)
 position = Vector2(5727, -849)
 
 [node name="Key" parent="." unique_id=1196262384 instance=ExtResource("12_q2dsb")]
-position = Vector2(6163, -2729)
+position = Vector2(7351, -3747)
 
 [node name="TaliAyun" parent="." unique_id=686433919 instance=ExtResource("13_p3r0x")]
 position = Vector2(2981, -334)
@@ -15540,7 +15548,7 @@ position = Vector2(5635, -2840)
 [node name="Kardus" parent="." unique_id=525501381 instance=ExtResource("14_p3r0x")]
 position = Vector2(5996, -229)
 
-[node name="HUD" parent="Kardus" unique_id=605016080 instance=ExtResource("15_5xqnf")]
+[node name="HUD" parent="." unique_id=605016080 instance=ExtResource("15_5xqnf")]
 
 [node name="FallZone" type="Area2D" parent="." unique_id=328201582]
 position = Vector2(2067, 1647)
@@ -15565,5 +15573,7 @@ physics_material_override = SubResource("PhysicsMaterial_ema3p")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spike/StaticBody2D" unique_id=1633696274]
 position = Vector2(2851.5, -2378)
 shape = SubResource("RectangleShape2D_q7pjq")
+
+[node name="PauseMenu" parent="." unique_id=2079411651 instance=ExtResource("18_pause")]
 
 [connection signal="body_entered" from="Spike" to="Player" method="_on_spike_body_entered"]

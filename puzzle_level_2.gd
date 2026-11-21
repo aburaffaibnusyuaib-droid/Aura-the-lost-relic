@@ -356,6 +356,10 @@ func putar_pipa(x: int, y: int) -> void:
 	if sudah_menang:
 		return
 
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_puzzle_click"):
+		am.play_puzzle_click()
+
 	grid[y][x] = putar_mask_kanan(grid[y][x])
 	sudut_visual[y][x] -= PI * 0.5
 	denyut_klik[y][x] = 1.0
@@ -371,9 +375,11 @@ func putar_pipa(x: int, y: int) -> void:
 	# Cek kemenangan: otomatis pudar, kirim sinyal ke portal, dan hapus popup dari layar
 	if teraliri[BARIS_KONEKSI][GRID_SIZE - 1] and (grid[BARIS_KONEKSI][GRID_SIZE - 1] & ARAH_KANAN) != 0:
 		sudah_menang = true
+		if am and am.has_method("play_puzzle_win"):
+			am.play_puzzle_win()
 		waktu_getar = 0.35
 		tambah_percikan(rect_grid.get_center(), COL_EMAS, 36)
-		await get_tree().create_timer(0.85).timeout
+		await get_tree().create_timer(0.85, true).timeout
 		if not is_inside_tree():
 			return
 

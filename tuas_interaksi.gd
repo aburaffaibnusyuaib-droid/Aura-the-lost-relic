@@ -47,6 +47,10 @@ func tarik_tuas() -> void:
 	bisa_interaksi = false
 	label.visible = false
 
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_interact"):
+		am.play_interact()
+
 	# Ubah tuas ke hijau menyala
 	anim_sprite.play("aktif")
 
@@ -67,7 +71,14 @@ func tarik_tuas() -> void:
 
 	# --- Sorot Kamera ke Pijakan Baru ---
 	var kamera: Camera2D = get_viewport().get_camera_2d()
+	var pos_lokal_awal: Vector2 = Vector2.ZERO
+	var offset_awal: Vector2 = Vector2.ZERO
+	var top_level_awal: bool = false
+
 	if kamera:
+		pos_lokal_awal = kamera.position
+		offset_awal = kamera.offset
+		top_level_awal = kamera.top_level
 		var pos_kamera_awal: Vector2 = kamera.global_position
 		kamera.top_level = true
 		kamera.global_position = pos_kamera_awal
@@ -85,8 +96,10 @@ func tarik_tuas() -> void:
 	# Tunggu pemain melihat pijakan muncul, lalu kembalikan kamera ke Rhein
 	await get_tree().create_timer(durasi_sorot_kamera).timeout
 	if kamera and is_instance_valid(player):
+		var target_kembali: Vector2 = player.global_position + pos_lokal_awal
 		var tween_back := create_tween()
-		tween_back.tween_property(kamera, "global_position", player.global_position, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		tween_back.tween_property(kamera, "global_position", target_kembali, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 		await tween_back.finished
-		kamera.top_level = false
-		kamera.position = Vector2.ZERO
+		kamera.top_level = top_level_awal
+		kamera.position = pos_lokal_awal
+		kamera.offset = offset_awal

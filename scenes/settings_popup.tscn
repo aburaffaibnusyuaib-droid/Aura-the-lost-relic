@@ -1,0 +1,214 @@
+[gd_scene format=3 uid="uid://bbgumqlm7n024"]
+
+[ext_resource type="Script" path="res://scenes/settings_popup.gd" id="1_settings"]
+
+[node name="SettingsPopup" type="CanvasLayer" unique_id=1982736410]
+process_mode = 3
+layer = 25
+script = ExtResource("1_settings")
+
+[node name="DimOverlay" type="ColorRect" parent="." unique_id=1829304912]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0352941, 0.054902, 0.0862745, 0.843137)
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=987213456]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -290.0
+offset_right = 260.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer" unique_id=129384756]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="JudulLabel" type="Label" parent="PanelContainer/VBox" unique_id=89234123]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.898039, 0.87451, 0.772549, 1)
+theme_override_colors/font_shadow_color = Color(0.0196078, 0.0392157, 0.0705882, 0.94)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 22
+text = "PENGATURAN"
+horizontal_alignment = 1
+
+[node name="SectionAudio" type="Label" parent="PanelContainer/VBox" unique_id=34567891]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.360784, 0.882353, 0.901961, 1)
+theme_override_font_sizes/font_size = 13
+text = "✦ PENGATURAN SUARA ✦"
+horizontal_alignment = 1
+
+[node name="GridAudio" type="GridContainer" parent="PanelContainer/VBox" unique_id=87654321]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 6
+columns = 3
+
+[node name="LabelMaster" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110001]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Volume Utama"
+
+[node name="SliderMaster" type="HSlider" parent="PanelContainer/VBox/GridAudio" unique_id=11110002]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="ValMaster" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110003]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.741176, 0.819608, 0.909804, 1)
+theme_override_font_sizes/font_size = 12
+text = "100%"
+horizontal_alignment = 2
+
+[node name="LabelBGM" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110004]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Volume Musik (BGM)"
+
+[node name="SliderBGM" type="HSlider" parent="PanelContainer/VBox/GridAudio" unique_id=11110005]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="ValBGM" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110006]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.741176, 0.819608, 0.909804, 1)
+theme_override_font_sizes/font_size = 12
+text = "80%"
+horizontal_alignment = 2
+
+[node name="LabelSFX" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110007]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Volume Efek (SFX)"
+
+[node name="SliderSFX" type="HSlider" parent="PanelContainer/VBox/GridAudio" unique_id=11110008]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 0.9
+
+[node name="ValSFX" type="Label" parent="PanelContainer/VBox/GridAudio" unique_id=11110009]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.741176, 0.819608, 0.909804, 1)
+theme_override_font_sizes/font_size = 12
+text = "90%"
+horizontal_alignment = 2
+
+[node name="CheckMute" type="CheckBox" parent="PanelContainer/VBox" unique_id=99988877]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Bisukan Suara (Mute)"
+
+[node name="SectionBahasa" type="Label" parent="PanelContainer/VBox" unique_id=45678912]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.360784, 0.882353, 0.901961, 1)
+theme_override_font_sizes/font_size = 13
+text = "✦ BAHASA / LANGUAGE ✦"
+horizontal_alignment = 1
+
+[node name="HBoxBahasa" type="HBoxContainer" parent="PanelContainer/VBox" unique_id=77766655]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BtnLangID" type="Button" parent="PanelContainer/VBox/HBoxBahasa" unique_id=77766656]
+custom_minimum_size = Vector2(170, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Bahasa Indonesia"
+
+[node name="BtnLangEN" type="Button" parent="PanelContainer/VBox/HBoxBahasa" unique_id=77766657]
+custom_minimum_size = Vector2(170, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "English"
+
+[node name="SectionKontrol" type="Label" parent="PanelContainer/VBox" unique_id=56789123]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85098, 0.329412, 1)
+theme_override_font_sizes/font_size = 13
+text = "✦ PANDUAN KONTROL ✦"
+horizontal_alignment = 1
+
+[node name="VBoxKontrol" type="VBoxContainer" parent="PanelContainer/VBox" unique_id=66655544]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="LabelMove" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655545]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "A / D atau [◄] [►] : Bergerak"
+horizontal_alignment = 1
+
+[node name="LabelJump" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655546]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "W / Spasi atau [▲] : Lompat"
+horizontal_alignment = 1
+
+[node name="LabelClimb" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655547]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "W / S (Dekat Tangga) : Memanjat"
+horizontal_alignment = 1
+
+[node name="LabelAttack" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655548]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "J / F : Tembak Aura"
+horizontal_alignment = 1
+
+[node name="LabelInteract" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655549]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "E : Tarik Tuas / Interaksi"
+horizontal_alignment = 1
+
+[node name="LabelPause" type="Label" parent="PanelContainer/VBox/VBoxKontrol" unique_id=66655550]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.627451, 0.698039, 0.776471, 1)
+theme_override_font_sizes/font_size = 12
+text = "ESC : Menu Jeda"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="PanelContainer/VBox" unique_id=22233344]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="BtnTutup" type="Button" parent="PanelContainer/VBox" unique_id=33322211]
+custom_minimum_size = Vector2(160, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
+text = "TUTUP"

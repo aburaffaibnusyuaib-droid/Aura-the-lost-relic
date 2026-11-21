@@ -1,3 +1,4 @@
+@tool
 extends CharacterBody2D
 
 # Sinyal komunikasi ke UI (HUD) dan sistem transisi portal
@@ -41,6 +42,15 @@ var gravitasi: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var di_area_tangga: bool = false
 var sedang_memanjat: bool = false
 var sedang_mendorong: bool = false
+var daftar_tangga: Array[Area2D] = []
+var tangga_aktif: Area2D = null
+var mask_normal: int = 1
+var sedang_di_duri: bool = false
+var timer_damage_duri: float = 0.0
+var terjebak_duri: bool:
+	get: return sedang_di_duri
+	set(val): sedang_di_duri = val
+var duri_aktif: Area2D = null
 
 # Variabel status zona seluncuran es
 var jumlah_zona_luncur: int = 0
@@ -49,6 +59,7 @@ var arah_luncur_aktif: float = 1.0
 
 # Variabel status damage, serangan, dan animasi spawn awal
 var sedang_kena_damage: bool = false
+var sedang_kebal: bool = false
 var sedang_menyerang: bool = false
 var bisa_nembak: bool = true
 var sedang_spawn: bool = false
@@ -70,6 +81,7 @@ var mask_lantai_awal: int = 1
 # Inisialisasi awal saat karakter masuk ke dalam scene
 func _ready() -> void:
 	add_to_group("Player")
+	mask_normal = collision_mask
 	mask_lantai_awal = collision_mask
 
 	# Daftarkan tombol tembak (J dan F) secara otomatis jika belum diatur di InputMap
@@ -126,6 +138,10 @@ func _ready() -> void:
 
 # Loop utama pemrosesan fisik dan kontrol karakter setiap frame
 func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+	if not InputMap.has_action("jalan_kanan"):
+		return
 	# Kurangi waktu jeda sebelum karakter boleh menangkap tali kembali
 	if cooldown_tali > 0.0:
 		cooldown_tali -= delta
@@ -139,7 +155,22 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# Kunci kontrol pemain saat karakter sedang terpental karena terkena damage
+	# Kunci kontrol saat pemain terkena jebakan duri (Spike trap: no jump, no horizontal, no bounce)
+	if sedang_di_duri:
+		velocity.x = 0.0
+		velocity.y = maxf(velocity.y, 0.0)
+		if not is_on_floor():
+			velocity.y += gravitasi * delta
+		move_and_slide()
+
+		if current_hp > 0:
+			timer_damage_duri += delta
+			if timer_damage_duri >= 0.45:
+				timer_damage_duri = 0.0
+				terima_damage_duri(1)
+		return
+
+	# Kunci kontrol pemain saat karakter sedang terpental karena terkena damage normal
 	if sedang_kena_damage:
 		atur_tabrakan_lantai(true)
 		velocity.y += gravitasi * delta
@@ -186,45 +217,102 @@ func _physics_process(delta: float) -> void:
 				lepas_tali(true)
 			return
 
+	# Bersihkan daftar tangga dari node yang sudah tidak valid
+	var valid_tangga: Array[Area2D] = []
+	for t in daftar_tangga:
+		if is_instance_valid(t):
+			valid_tangga.append(t)
+	daftar_tangga = valid_tangga
+	di_area_tangga = (daftar_tangga.size() > 0)
+	tangga_aktif = daftar_tangga[0] if di_area_tangga else null
+
 	# Baca input pergerakan horizontal dan vertikal pemain
 	var arah_x := Input.get_axis("jalan_kiri", "jalan_kanan")
 	var arah_y := Input.get_axis("leader_up", "leader_down")
 
-	# 2. Mekanik memanjat tangga (dapat menembus pijakan atas tanpa One-Way Collision)
-	if di_area_tangga and arah_y != 0.0 and not sedang_meluncur:
-		sedang_memanjat = true
+	# 2. Mekanik memanjat tangga custom (anti-nyangkut di tanah, blokir total jump, mulus naik/turun)
+	var posisi_kaki: float = global_position.y + 186.0
+	var center_x_tangga: float = global_position.x
+	var t_atas: float = INF
+	var t_bawah: float = -INF
+	var batas_platform_atas: float = INF
+
+	if tangga_aktif:
+		center_x_tangga = tangga_aktif.get_center_x() if tangga_aktif.has_method("get_center_x") else tangga_aktif.global_position.x
+		t_atas = tangga_aktif.get_batas_atas() if tangga_aktif.has_method("get_batas_atas") else (tangga_aktif.global_position.y - 64.0)
+		t_bawah = tangga_aktif.get_batas_bawah() if tangga_aktif.has_method("get_batas_bawah") else (tangga_aktif.global_position.y + 64.0)
+		batas_platform_atas = t_atas + 24.0
+
+	# Clean Entry: Hanya masuk memanjat jika berada di area tangga
+	if di_area_tangga and not sedang_memanjat and not terjebak_duri and not sedang_meluncur and not sedang_spawn and not sedang_kena_damage and not sedang_gelayutan:
+		if is_on_floor():
+			# Masuk dari platform atas tangga dengan menekan tombol bawah (S)
+			if arah_y > 0.0:
+				if absf(posisi_kaki - batas_platform_atas) <= 32.0 or posisi_kaki < t_bawah - 40.0:
+					sedang_memanjat = true
+					global_position.y += 6.0
+					collision_mask = mask_normal & ~1
+					velocity = Vector2.ZERO
+			elif arah_y < 0.0:
+				# Berdiri di dasar tangga dan menekan tombol atas (W)
+				sedang_memanjat = true
+				collision_mask = mask_normal & ~1
+				velocity = Vector2.ZERO
+		else:
+			# Melompat atau jatuh ke tangga di udara dan menekan tombol vertikal
+			if arah_y != 0.0:
+				sedang_memanjat = true
+				collision_mask = mask_normal & ~1
+				velocity = Vector2.ZERO
 
 	if sedang_memanjat:
-		if not di_area_tangga:
-			sedang_memanjat = false
-			atur_tabrakan_lantai(true)
-		elif Input.is_action_just_pressed("jump"):
-			sedang_memanjat = false
-			atur_tabrakan_lantai(true)
-			velocity.y = kekuatan_lompat
+		# Jika keluar dari seluruh area tangga, lepaskan status panjat
+		if not di_area_tangga or not is_instance_valid(tangga_aktif):
+			coba_lepas_tangga()
 		else:
-			# Matikan tabrakan lantai sementara saat memanjat naik agar tembus ke pijakan atas
-			if arah_y < 0.0:
-				atur_tabrakan_lantai(false)
-			# Cek ruang kosong di bawah saat turun tangga agar bisa menembus pijakan atas ke bawah
-			elif arah_y > 0.0:
-				atur_tabrakan_lantai(true)
-				var ruang_kosong_di_bawah := not test_move(global_transform.translated(Vector2(0.0, 56.0)), Vector2.ZERO)
-				if ruang_kosong_di_bawah:
-					atur_tabrakan_lantai(false)
-				elif is_on_floor():
-					sedang_memanjat = false
-					atur_tabrakan_lantai(true)
+			# ATURAN KETAT: JUMP DILOCK / DIBLOKIR 100% TOTAL selama memanjat tangga
+			# Nonaktifkan terrain layer 1 agar tubuh Rhein tidak terbentur platform
+			collision_mask = mask_normal & ~1
+
+			# 1. Menanjak ke atas mencapai permukaan platform atas (arah_y < 0)
+			if arah_y < 0.0 and posisi_kaki <= batas_platform_atas + 4.0:
+				if coba_lepas_tangga():
+					global_position.y = batas_platform_atas - 186.0
+					velocity = Vector2.ZERO
+					ganti_animasi("idle")
+					move_and_slide()
+					return
+			# 2. Menuruni tangga mencapai tanah dasar (arah_y > 0)
+			elif arah_y > 0.0 and (posisi_kaki >= t_bawah - 6.0 or (test_move(global_transform, Vector2(0, 4)) and posisi_kaki >= t_bawah - 24.0)):
+				if coba_lepas_tangga():
+					global_position.y = t_bawah - 186.0
+					velocity = Vector2.ZERO
+					ganti_animasi("idle")
+					move_and_slide()
+					return
+			# 3. Pemain sengaja melangkah keluar horizontal dari samping tangga
+			elif arah_x != 0.0 and absf(global_position.x - center_x_tangga) > 28.0:
+				if coba_lepas_tangga():
+					velocity.x = arah_x * kecepatan_jalan
 					move_and_slide()
 					return
 
+			# Pergerakan vertikal & pergeseran horizontal saat memanjat
 			velocity.y = arah_y * kecepatan_panjat
-			velocity.x = arah_x * (kecepatan_jalan * 0.5)
+			if arah_x != 0.0:
+				velocity.x = arah_x * (kecepatan_jalan * 0.4)
+			else:
+				velocity.x = 0.0
+				# Auto-centering X halus tanpa snap/kepental
+				var col_shape = tangga_aktif.get_node_or_null("CollisionShape2D")
+				var pusat_x: float = col_shape.global_position.x if col_shape else tangga_aktif.global_position.x
+				if absf(pusat_x - global_position.x) < 32.0:
+					global_position.x = move_toward(global_position.x, pusat_x, 120.0 * delta)
 
 			ganti_animasi("climb")
 			if anim:
 				anim.offset = Vector2.ZERO
-				if arah_y != 0.0 or arah_x != 0.0:
+				if arah_y != 0.0:
 					anim.play()
 				else:
 					anim.pause()
@@ -263,6 +351,9 @@ func _physics_process(delta: float) -> void:
 			velocity.y = kekuatan_lompat_luncur
 			velocity.x = arah_luncur_aktif * (kecepatan_luncur * 0.92)
 			ganti_animasi("jump")
+			var am := get_node_or_null("/root/AudioManager")
+			if am and am.has_method("play_jump"):
+				am.play_jump()
 			move_and_slide()
 			return
 
@@ -294,6 +385,9 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = kekuatan_lompat
+		var am := get_node_or_null("/root/AudioManager")
+		if am and am.has_method("play_jump"):
+			am.play_jump()
 
 	move_and_slide()
 
@@ -314,11 +408,22 @@ func _physics_process(delta: float) -> void:
 # Mengatur aktif atau tidaknya tabrakan lantai agar karakter tidak nyangkut di dalam tile saat memanjat
 func atur_tabrakan_lantai(aktif: bool) -> void:
 	if aktif:
-		if collision_mask == 0 and test_move(global_transform, Vector2.ZERO):
+		if is_inside_tree() and test_move(global_transform, Vector2.ZERO):
 			return
-		collision_mask = mask_lantai_awal
+		collision_mask = mask_normal
 	else:
-		collision_mask = 0
+		collision_mask = mask_normal & ~1
+
+
+# Menguji apakah aman melepaskan status tangga tanpa terjepit di dalam dinding atau tanah
+func coba_lepas_tangga() -> bool:
+	var mask_lama := collision_mask
+	collision_mask = mask_normal
+	if is_inside_tree() and test_move(global_transform, Vector2.ZERO):
+		collision_mask = mask_lama
+		return false
+	sedang_memanjat = false
+	return true
 
 
 # Memainkan animasi seluncuran sesuai nama animasi yang tersedia
@@ -438,6 +543,10 @@ func eksekusi_tembakan() -> void:
 	peluru.global_position = Vector2(spawn_x, spawn_y)
 	get_parent().add_child(peluru)
 
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_shoot"):
+		am.play_shoot()
+
 	if anim and anim.sprite_frames and anim.sprite_frames.has_animation("attack"):
 		await anim.animation_finished
 	else:
@@ -494,7 +603,7 @@ func pantulkan(kekuatan: float = 340.0) -> void:
 
 # Mengurangi HP karakter dan memberikan efek knockback saat menerima damage
 func terima_damage(jumlah: int = 1, arah_serang: Vector2 = Vector2.ZERO) -> void:
-	if sedang_kena_damage:
+	if sedang_kena_damage or sedang_kebal:
 		return
 
 	if sedang_gelayutan:
@@ -507,8 +616,12 @@ func terima_damage(jumlah: int = 1, arah_serang: Vector2 = Vector2.ZERO) -> void
 	current_hp -= jumlah
 	hp_berubah.emit(current_hp)
 
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_hurt"):
+		am.play_hurt()
+
 	if current_hp <= 0:
-		respawn()
+		picu_game_over()
 		return
 
 	sedang_kena_damage = true
@@ -520,17 +633,42 @@ func terima_damage(jumlah: int = 1, arah_serang: Vector2 = Vector2.ZERO) -> void
 	var arah_knockback = -arah_hadap
 	if arah_serang != Vector2.ZERO:
 		arah_knockback = signf(global_position.x - arah_serang.x)
+		if arah_knockback == 0.0:
+			arah_knockback = -arah_hadap
 
-	velocity = Vector2(arah_knockback * 160.0, -260.0)
+	velocity = Vector2(arah_knockback * 260.0, -320.0)
 
-	if anim:
-		var tween = create_tween()
-		tween.tween_property(anim, "modulate:a", 0.3, 0.1)
-		tween.tween_property(anim, "modulate:a", 1.0, 0.1)
+	# Aktifkan kebal (i-frames) selama 1.0 detik dengan efek kedip alpha
+	aktifkan_kebal(1.0)
 
-	await get_tree().create_timer(0.4).timeout
+	# Kembalikan kontrol pemain setelah stun knockback singkat (0.35 detik)
+	await get_tree().create_timer(0.35).timeout
 	if is_inside_tree():
 		sedang_kena_damage = false
+
+
+# Alias bahasa Inggris untuk kompatibilitas hazard
+func take_damage(jumlah: int = 1, arah_serang: Vector2 = Vector2.ZERO) -> void:
+	terima_damage(jumlah, arah_serang)
+
+
+# Mengaktifkan status kebal (i-frames) dengan efek kedip alpha yang jelas
+func aktifkan_kebal(durasi: float = 1.0) -> void:
+	sedang_kebal = true
+	if anim:
+		var tween = create_tween()
+		var kedip_loops = int(durasi / 0.2)
+		for i in range(kedip_loops):
+			tween.tween_property(anim, "modulate:a", 0.25, 0.1)
+			tween.tween_property(anim, "modulate:a", 1.0, 0.1)
+		await tween.finished
+	else:
+		await get_tree().create_timer(durasi).timeout
+
+	if is_inside_tree():
+		sedang_kebal = false
+		if anim:
+			anim.modulate.a = 1.0
 
 
 # Menandai bahwa karakter telah mengambil kunci level
@@ -550,19 +688,51 @@ func respawn() -> void:
 	sedang_meluncur = false
 	jumlah_zona_luncur = 0
 	sedang_memanjat = false
+	daftar_tangga.clear()
+	di_area_tangga = false
+	sedang_di_duri = false
+	timer_damage_duri = 0.0
+	terjebak_duri = false
+	duri_aktif = null
 	sedang_kena_damage = false
+	sedang_kebal = false
 	sedang_menyerang = false
 	sedang_spawn = false
 	cooldown_tali = 0.0
-	collision_mask = mask_lantai_awal
+	collision_mask = mask_normal
 
 	if anim:
 		anim.rotation = 0.0
 		anim.offset = Vector2.ZERO
+		anim.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	ganti_animasi("idle")
 
 	hp_berubah.emit(current_hp)
 	status_kunci_berubah.emit(has_key)
+
+
+# Menampilkan popup Game Over saat nyawa habis dan membekukan simulasi dunia
+func picu_game_over() -> void:
+	sedang_kena_damage = false
+	sedang_kebal = false
+	velocity = Vector2.ZERO
+	if anim:
+		anim.rotation = 0.0
+		anim.offset = Vector2.ZERO
+		anim.modulate.a = 1.0
+
+	var tree := get_tree() if is_inside_tree() else Engine.get_main_loop() as SceneTree
+	if not tree:
+		return
+
+	var go_scene := load("res://scenes/game_over_popup.tscn")
+	if go_scene:
+		var scene_aktif := tree.current_scene if tree.current_scene else tree.root
+		if scene_aktif and not scene_aktif.has_node("GameOverPopup"):
+			var popup = go_scene.instantiate()
+			scene_aktif.add_child(popup)
+			tree.paused = true
+			return
 
 
 # Animasi karakter tersedot masuk ke dalam portal akhir level
@@ -578,6 +748,7 @@ func masuk_portal(posisi_tengah_portal: Vector2) -> void:
 	velocity = Vector2.ZERO
 	sedang_menyerang = false
 	sedang_kena_damage = false
+	sedang_kebal = false
 	sedang_spawn = false
 	bisa_nembak = false
 
@@ -607,37 +778,170 @@ func masuk_portal(posisi_tengah_portal: Vector2) -> void:
 # Kode jatuh ke jurang
 func kena_jurang(body: Node2D) -> void:
 	if body == self:
-		respawn()
-
-
-# Kode terkena duri
-func kena_duri(body: Node2D) -> void:
-	if body == self:
-		terima_damage(1)
-
-
-# Kode masuk area tangga
-func masuk_area_tangga(body: Node2D) -> void:
-	if body == self:
-		di_area_tangga = true
-
-
-# Kode keluar area tangga
-func keluar_area_tangga(body: Node2D) -> void:
-	if body == self:
-		di_area_tangga = false
-		sedang_memanjat = false
-		atur_tabrakan_lantai(true)
+		jatuh_ke_jurang()
 
 
 # Sinyal otomatis saat karakter menyentuh FallZone
 func _on_fall_zone_body_entered(body: Node2D) -> void:
 	if body == self or body.name == "Player" or body.is_in_group("Player"):
-		if body.has_method("respawn"):
-			body.respawn()
-		elif has_node("SpawnPoint"):
-			body.velocity = Vector2.ZERO
-			body.global_position = $SpawnPoint.global_position
+		jatuh_ke_jurang()
+
+
+# Kematian instan (jatuh ke jurang atau kondisi lethal): HP langsung 0 & Game Over seketika
+func mati_instan() -> void:
+	current_hp = 0
+	hp_berubah.emit(0)
+	velocity = Vector2.ZERO
+	picu_game_over()
+
+
+# Logika penanganan jatuh ke jurang (instan kalah & munculkan popup game over)
+func jatuh_ke_jurang() -> void:
+	mati_instan()
+
+
+# Penanganan saat karakter terjerat jebakan duri
+func masuk_duri(duri: Area2D = null) -> void:
+	if sedang_di_duri:
+		return
+	sedang_di_duri = true
+	duri_aktif = duri
+	timer_damage_duri = 0.0
+	if sedang_memanjat:
+		sedang_memanjat = false
+		collision_mask = mask_normal
+	if sedang_gelayutan:
+		lepas_tali(false)
+	sedang_meluncur = false
+	jumlah_zona_luncur = 0
+	velocity.x = 0.0
+	velocity.y = maxf(velocity.y, 0.0)
+
+	# Langsung kurangi -1 HP pada sentuhan pertama
+	terima_damage_duri(1)
+
+
+# Penanganan saat karakter terbebas dari jebakan duri
+func keluar_duri() -> void:
+	sedang_di_duri = false
+	timer_damage_duri = 0.0
+	duri_aktif = null
+
+
+# Alias kompatibilitas
+func kena_jebakan_duri(duri: Area2D = null) -> void:
+	masuk_duri(duri)
+
+
+func lepas_jebakan_duri() -> void:
+	keluar_duri()
+
+
+# Menerima damage duri berkala tanpa pantulan dan tanpa masa kebal lolos
+func terima_damage_duri(jumlah: int = 1) -> void:
+	if current_hp <= 0:
+		return
+
+	current_hp -= jumlah
+	hp_berubah.emit(current_hp)
+
+	var am := get_node_or_null("/root/AudioManager")
+	if am and am.has_method("play_hurt"):
+		am.play_hurt()
+
+	if current_hp <= 0:
+		sedang_di_duri = false
+		picu_game_over()
+		return
+
+	ganti_animasi("hurt")
+	if anim:
+		var tween = create_tween()
+		tween.tween_property(anim, "modulate", Color(1.0, 0.2, 0.2, 1.0), 0.1)
+		tween.tween_property(anim, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.1)
+
+
+# Kompatibilitas sinyal duri lama
+func kena_duri(body: Node2D = null) -> void:
+	if body == self or body == null:
+		masuk_duri()
+
+
+# Kode masuk area tangga (menerima sinyal dari body maupun area)
+func masuk_area_tangga(tangga_obj: Variant = null) -> void:
+	var area: Area2D = null
+	if tangga_obj is Area2D:
+		area = tangga_obj
+	elif tangga_obj is CollisionObject2D and tangga_obj.get_parent() is Area2D:
+		area = tangga_obj.get_parent()
+
+	if area and not daftar_tangga.has(area):
+		daftar_tangga.append(area)
+	di_area_tangga = (daftar_tangga.size() > 0)
+
+
+# Kode keluar area tangga (menerima sinyal dari body maupun area)
+func keluar_area_tangga(tangga_obj: Variant = null) -> void:
+	var area: Area2D = null
+	if tangga_obj is Area2D:
+		area = tangga_obj
+	elif tangga_obj is CollisionObject2D and tangga_obj.get_parent() is Area2D:
+		area = tangga_obj.get_parent()
+
+	if area:
+		daftar_tangga.erase(area)
+	else:
+		var ld = get_node_or_null("LeaderDetector")
+		if ld:
+			daftar_tangga.clear()
+			for a in ld.get_overlapping_areas():
+				if a.is_in_group("ladder") or a.is_in_group("leader") or a.name.to_lower().contains("ladder") or a.name.to_lower().contains("leader"):
+					daftar_tangga.append(a)
+
+	di_area_tangga = (daftar_tangga.size() > 0)
+	if not di_area_tangga and sedang_memanjat:
+		coba_lepas_tangga()
+
+
+# Mendapatkan batas atas dan bawah dari area tangga yang sedang dinaiki
+func get_info_tangga_aktif() -> Dictionary:
+	if tangga_aktif and is_instance_valid(tangga_aktif):
+		var atas: float = tangga_aktif.get_batas_atas() if tangga_aktif.has_method("get_batas_atas") else tangga_aktif.global_position.y - 64.0
+		var bawah: float = tangga_aktif.get_batas_bawah() if tangga_aktif.has_method("get_batas_bawah") else tangga_aktif.global_position.y + 64.0
+		return {"atas": atas, "bawah": bawah}
+
+	var ld = get_node_or_null("LeaderDetector")
+	var batas_atas := INF
+	var batas_bawah := -INF
+	if ld:
+		for a in ld.get_overlapping_areas():
+			if a.is_in_group("ladder") or a.is_in_group("leader") or a.name.to_lower().contains("ladder") or a.name.to_lower().contains("leader"):
+				if a.has_method("get_batas_atas") and a.has_method("get_batas_bawah"):
+					var a_atas: float = a.get_batas_atas()
+					var a_bawah: float = a.get_batas_bawah()
+					if a_atas < batas_atas:
+						batas_atas = a_atas
+					if a_bawah > batas_bawah:
+						batas_bawah = a_bawah
+				else:
+					for c in a.get_children():
+						if c is CollisionShape2D and c.shape is RectangleShape2D:
+							var atas: float = c.global_position.y - (c.shape.size.y * 0.5)
+							var bawah: float = c.global_position.y + (c.shape.size.y * 0.5)
+							if atas < batas_atas:
+								batas_atas = atas
+							if bawah > batas_bawah:
+								batas_bawah = bawah
+	return {"atas": batas_atas, "bawah": batas_bawah}
+
+
+# Alias sinyal tangga untuk kompatibilitas penamaan
+func _on_ladder_area_entered(area: Variant = null) -> void:
+	masuk_area_tangga(area)
+
+
+func _on_ladder_area_exited(area: Variant = null) -> void:
+	keluar_area_tangga(area)
 
 
 # Sinyal otomatis saat karakter menyentuh area Spike

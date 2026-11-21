@@ -6,14 +6,17 @@ signal puzzle_selesai
 
 
 func _ready() -> void:
-	if get_parent() != get_tree().root and get_parent().name.to_lower().contains("level"):
-		visible = false
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	if papan and papan.has_signal("puzzle_selesai"):
 		if not papan.puzzle_selesai.is_connected(_on_papan_selesai):
 			papan.puzzle_selesai.connect(_on_papan_selesai)
 
 	visibility_changed.connect(_on_visibility_changed)
+	if visible and papan and papan.has_method("buat_papan_baru"):
+		papan.buat_papan_baru()
+		if papan.has_method("mainkan_animasi_buka"):
+			papan.mainkan_animasi_buka()
 
 
 func _on_papan_selesai() -> void:

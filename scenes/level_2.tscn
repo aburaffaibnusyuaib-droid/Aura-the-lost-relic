@@ -14,6 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://cb86dc7eerrj5" path="res://kardus.tscn" id="8_ne2mo"]
 [ext_resource type="PackedScene" uid="uid://cgdxkn15v1gfq" path="res://tali_ayun.tscn" id="12_172wr"]
 [ext_resource type="PackedScene" uid="uid://dtgq0nahouo05" path="res://zona_seluncur.tscn" id="13_g2hoc"]
+[ext_resource type="Script" uid="uid://bmj2r5b3lcnpy" path="res://ladder.gd" id="14_ladder"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="15_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jm1iu"]
 texture = ExtResource("1_3bmlt")
@@ -10267,8 +10269,13 @@ sources/0 = SubResource("TileSetAtlasSource_eqxsl")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
 size = Vector2(9207, 99)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6cvei"]
-size = Vector2(90, 569.25)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l2_lad1"]
+resource_local_to_scene = true
+size = Vector2(26, 600)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l2_lad2"]
+resource_local_to_scene = true
+size = Vector2(26, 504)
 
 [node name="level2" type="Node2D" unique_id=899315366]
 script = ExtResource("1_6cvei")
@@ -10280,7 +10287,7 @@ tile_set = SubResource("TileSet_lrn7f")
 
 [node name="portal" parent="." unique_id=1865235178 instance=ExtResource("4_fldb1")]
 position = Vector2(6593, 374)
-target_level = "uid://7a6sojfcoqgs"
+target_level = "res://scenes/level_3.tscn"
 puzzle_scene = ExtResource("5_guvtl")
 
 [node name="mushroom2" parent="." unique_id=1363940341 instance=ExtResource("5_wo48x")]
@@ -10291,7 +10298,9 @@ position = Vector2(371, -1307)
 
 [node name="Player" parent="." unique_id=106448807 instance=ExtResource("4_wo48x")]
 z_index = 100
-position = Vector2(3290, 335)
+position = Vector2(503, -1113)
+floor_max_angle = 1.134464
+floor_snap_length = 18.0
 
 [node name="HUD" parent="." unique_id=605016080 instance=ExtResource("7_que50")]
 
@@ -10352,19 +10361,25 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Ladder" type="Area2D" parent="." unique_id=1110940259]
-position = Vector2(-52, -570)
+[node name="Ladder" type="Area2D" parent="." unique_id=1110940259 groups=["ladder", "leader"]]
+position = Vector2(336, 100)
+script = ExtResource("14_ladder")
+lebar_tangga = 26.0
+tinggi_tangga = 600.0
+offset_y = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ladder" unique_id=890632065]
-position = Vector2(390, 693.625)
-shape = SubResource("RectangleShape2D_6cvei")
+shape = SubResource("RectangleShape2D_l2_lad1")
 
-[node name="Ladder2" type="Area2D" parent="." unique_id=1634369720]
-position = Vector2(-52, -570)
+[node name="Ladder2" type="Area2D" parent="." unique_id=1634369720 groups=["ladder", "leader"]]
+position = Vector2(1632, -412)
+script = ExtResource("14_ladder")
+lebar_tangga = 26.0
+tinggi_tangga = 504.0
+offset_y = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ladder2" unique_id=2108179701]
-position = Vector2(1687, 178)
-shape = SubResource("RectangleShape2D_6cvei")
+shape = SubResource("RectangleShape2D_l2_lad2")
 
 [node name="Enemy2" parent="." unique_id=1030131347 instance=ExtResource("8_hey2k")]
 position = Vector2(1076, -292)
@@ -10391,8 +10406,10 @@ gravitasi_bandul = 9.5
 position = Vector2(5185, 243.99997)
 rotation = 0.20257404
 
+[node name="PauseMenu" parent="." instance=ExtResource("15_pause")]
+
 [connection signal="body_entered" from="FallZone" to="Player" method="_on_fall_zone_body_entered"]
-[connection signal="body_entered" from="Ladder" to="." method="masuk_area_tangga"]
-[connection signal="body_exited" from="Ladder" to="." method="keluar_area_tangga"]
-[connection signal="body_entered" from="Ladder2" to="." method="masuk_area_tangga"]
-[connection signal="body_exited" from="Ladder2" to="." method="keluar_area_tangga"]
+[connection signal="body_entered" from="Ladder" to="Player" method="masuk_area_tangga"]
+[connection signal="body_exited" from="Ladder" to="Player" method="keluar_area_tangga"]
+[connection signal="body_entered" from="Ladder2" to="Player" method="masuk_area_tangga"]
+[connection signal="body_exited" from="Ladder2" to="Player" method="keluar_area_tangga"]

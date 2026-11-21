@@ -14,6 +14,10 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Player") or body.name.to_lower().contains("player"):
 		sudah_diambil = true
 
+		var am := get_node_or_null("/root/AudioManager")
+		if am and am.has_method("play_key"):
+			am.play_key()
+
 		# Berikan kunci ke pemain
 		if body.has_method("ambil_kunci"):
 			body.ambil_kunci()

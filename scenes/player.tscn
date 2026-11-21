@@ -504,9 +504,9 @@ position = Vector2(178, 113)
 shape = SubResource("CapsuleShape2D_lrn7f")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2141901675]
-position = Vector2(-533, -333)
+position = Vector2(-487, -380)
 anchor_mode = 0
-zoom = Vector2(0.8, 1)
+zoom = Vector2(0.9, 0.9)
 
 [node name="LeaderDetector" type="Area2D" parent="." unique_id=829209529]
 
@@ -514,5 +514,5 @@ zoom = Vector2(0.8, 1)
 position = Vector2(180, 130)
 shape = SubResource("CapsuleShape2D_xiplf")
 
-[connection signal="area_entered" from="LeaderDetector" to="." method="_on_ladder_area_entered"]
-[connection signal="area_exited" from="LeaderDetector" to="." method="_on_ladder_area_exited"]
+[connection signal="area_entered" from="LeaderDetector" to="." method="masuk_area_tangga"]
+[connection signal="area_exited" from="LeaderDetector" to="." method="keluar_area_tangga"]

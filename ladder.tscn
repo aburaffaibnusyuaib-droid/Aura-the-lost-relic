@@ -2,14 +2,15 @@
 
 [ext_resource type="Script" uid="uid://bmj2r5b3lcnpy" path="res://ladder.gd" id="1_cq4ai"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lrn7f"]
-size = Vector2(111.5, 1025)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ladder"]
+resource_local_to_scene = true
+size = Vector2(26, 133)
 
-[node name="Ladder" type="Area2D" unique_id=88088657]
+[node name="Ladder" type="Area2D" unique_id=88088657 groups=["ladder", "leader"]]
 script = ExtResource("1_cq4ai")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=942579883]
-position = Vector2(172.25, 28.5)
-shape = SubResource("RectangleShape2D_lrn7f")
+position = Vector2(0, -2.5)
+shape = SubResource("RectangleShape2D_ladder")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1040295248]

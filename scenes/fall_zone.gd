@@ -1,6 +1,9 @@
+@tool
 extends Area2D
 
 @export var titik_respawn: Marker2D
+
+var sedang_proses_jatuh: bool = false
 
 
 func _ready() -> void:
@@ -8,14 +11,29 @@ func _ready() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.is_in_group("Player") or body.name == "Player":
-		# Kurangi nyawa/HP jika ada sistem damage (opsional)
-		if body.has_method("take_damage"):
-			body.take_damage(1)
+	if Engine.is_editor_hint() or sedang_proses_jatuh:
+		return
 
-		# Pindahkan Rhein ke titik respawn tanpa me-reset scene & item
-		if titik_respawn:
-			body.global_position = titik_respawn.global_position
-			body.velocity = Vector2.ZERO
-		else:
-			get_tree().reload_current_scene()
+	if body.is_in_group("Player") or body.name == "Player":
+		proses_jatuh(body)
+
+
+func proses_jatuh(body: Node2D) -> void:
+	sedang_proses_jatuh = true
+
+	# Jatuh ke jurang adalah kematian instan: HP 0 & langsung munculkan Popup Game Over
+	if body.has_method("mati_instan"):
+		body.mati_instan()
+	elif body.has_method("jatuh_ke_jurang"):
+		body.jatuh_ke_jurang()
+	else:
+		if "current_hp" in body:
+			body.current_hp = 0
+		if body.has_signal("hp_berubah"):
+			body.hp_berubah.emit(0)
+		if body.has_method("picu_game_over"):
+			body.picu_game_over()
+		elif body.has_method("respawn"):
+			body.respawn()
+
+	sedang_proses_jatuh = false

@@ -272,9 +272,15 @@ func sambung_titik(dari: int, ke: int, pos_lokal_tujuan: Vector2) -> void:
 		tambah_gelombang(pos_lokal_tujuan, Color(0.35, 1.0, 0.72))
 		perbarui_indikator_kristal()
 
+		var am := get_node_or_null("/root/AudioManager")
+		if am and am.has_method("play_puzzle_click"):
+			am.play_puzzle_click()
+
 		if edges_tergambar.size() == edges_target.size():
 			sudah_menang = true
 			sedang_menarik = false
+			if am and am.has_method("play_puzzle_win"):
+				am.play_puzzle_win()
 			label_status.text = "✦ SEGEL ALTAR TERBUKA! PORTAL RIMBA AKTIF ✦"
 			label_status.add_theme_color_override("font_color", Color(0.45, 1.0, 0.72))
 
